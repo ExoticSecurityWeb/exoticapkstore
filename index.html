@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ExoticAPK Store 🌴</title>
+<!-- ══ EXOTIC SECURITY LAYER v2.0 — ExoticSecurity / Pink Paradise ══ -->
+<!-- [1] CSP — Content Security Policy -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none';">
+<!-- [2] Anti-Clickjacking -->
+<meta http-equiv="X-Frame-Options" content="DENY">
+<!-- [3] MIME Sniffing Protection -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<!-- [4] Referrer Policy strict -->
+<meta name="referrer" content="no-referrer">
+<!-- [5] Anti-cache -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<!-- [6] No indexing — store privé -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -517,11 +532,238 @@
     letter-spacing: 1px;
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ══ CAPTCHA SCREEN ══ */
+  #captcha-screen {
+    position: fixed;
+    inset: 0;
+    background: rgba(7,26,14,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 20px;
+  }
+  .captcha-box {
+    background: linear-gradient(145deg, rgba(13,46,26,0.95), rgba(7,26,14,0.99));
+    border: 1px solid rgba(168,230,61,0.25);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 0 80px rgba(168,230,61,0.08), 0 20px 60px rgba(0,0,0,0.8);
+    animation: captchaIn 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes captchaIn {
+    from { opacity:0; transform: scale(0.8) translateY(30px); }
+    to { opacity:1; transform: scale(1) translateY(0); }
+  }
+  .captcha-shield {
+    font-size: 3.5rem;
+    margin-bottom: 8px;
+    animation: shieldPulse 2s ease-in-out infinite;
+  }
+  @keyframes shieldPulse {
+    0%,100% { filter: drop-shadow(0 0 10px rgba(168,230,61,0.3)); }
+    50% { filter: drop-shadow(0 0 30px rgba(168,230,61,0.8)); }
+  }
+  .captcha-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.4rem;
+    color: var(--lime);
+    margin-bottom: 4px;
+  }
+  .captcha-sub {
+    font-size: 0.75rem;
+    color: rgba(255,248,231,0.4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .captcha-challenge {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(168,230,61,0.15);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .captcha-question {
+    font-size: 0.8rem;
+    color: rgba(255,248,231,0.5);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .captcha-emojis {
+    font-size: 2.2rem;
+    letter-spacing: 8px;
+    margin-bottom: 14px;
+    user-select: none;
+  }
+  .captcha-input-row {
+    display: flex;
+    gap: 8px;
+  }
+  .captcha-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(168,230,61,0.2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--cream);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .captcha-input:focus { border-color: var(--lime); }
+  .captcha-input.error { border-color: var(--coral); animation: shake 0.4s; }
+  .captcha-input.success { border-color: var(--lime); background: rgba(168,230,61,0.08); }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  .captcha-btn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--lime), #7fc42a);
+    color: var(--deep);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .captcha-btn:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(168,230,61,0.4); }
+  .captcha-error {
+    font-size: 0.75rem;
+    color: var(--coral);
+    margin-top: 10px;
+    min-height: 18px;
+    font-weight: 700;
+  }
+  .captcha-attempts {
+    font-size: 0.65rem;
+    color: rgba(255,248,231,0.25);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+  .captcha-refresh {
+    background: none;
+    border: none;
+    color: rgba(0,229,196,0.5);
+    font-size: 0.7rem;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Nunito', sans-serif;
+    margin-top: 8px;
+  }
+  .captcha-refresh:hover { color: var(--teal); }
+  .captcha-security-info {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.65rem;
+    color: rgba(255,248,231,0.25);
+    letter-spacing: 1px;
+  }
+  .captcha-locked {
+    background: rgba(255,107,53,0.1);
+    border: 1px solid rgba(255,107,53,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    color: var(--coral);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 10px;
+  }
+
+  /* ══ EXOTIC SECURITY BADGE ══ */
+  .exotic-security-bar {
+    background: linear-gradient(90deg, rgba(0,229,196,0.05), rgba(168,230,61,0.05), rgba(0,229,196,0.05));
+    border-top: 1px solid rgba(0,229,196,0.15);
+    border-bottom: 1px solid rgba(0,229,196,0.15);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 5;
+    margin-bottom: 20px;
+  }
+  .sec-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(0,229,196,0.7);
+  }
+  .sec-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 6px var(--lime);
+    animation: blink 2s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+
 </style>
 </head>
 <body>
 
 <!-- FLOATING PARTICLES -->
+
+<!-- ══ EXOTIC SECURITY CAPTCHA ══ -->
+<div id="captcha-screen">
+  <div class="captcha-box">
+    <div class="captcha-shield">🛡️</div>
+    <div class="captcha-title">ExoticSecurity</div>
+    <div class="captcha-sub">Vérification requise • Store privé</div>
+    <div class="captcha-challenge">
+      <div class="captcha-question">Combien d'emojis exotiques vois-tu ?</div>
+      <div class="captcha-emojis" id="captcha-emojis"></div>
+      <div class="captcha-input-row">
+        <input type="number" class="captcha-input" id="captcha-input" placeholder="?" min="1" max="20" autocomplete="off">
+        <button class="captcha-btn" onclick="verifyCaptcha()">✓</button>
+      </div>
+      <div class="captcha-error" id="captcha-error"></div>
+      <div class="captcha-attempts" id="captcha-attempts"></div>
+    </div>
+    <button class="captcha-refresh" onclick="newChallenge()">🔄 Nouveau défi</button>
+    <div class="captcha-security-info">
+      🔒 ExoticSecurity v2.0 · Pink Paradise · Store privé
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXOTIC SECURITY BAR ══ -->
+<div class="exotic-security-bar">
+  <div class="sec-badge"><span class="dot"></span> CSP Actif</div>
+  <div class="sec-badge"><span class="dot"></span> Anti-Clickjacking</div>
+  <div class="sec-badge"><span class="dot"></span> SHA-256 Vérifié</div>
+  <div class="sec-badge"><span class="dot"></span> No-Index</div>
+  <div class="sec-badge"><span class="dot"></span> ExoticSecurity v2.0</div>
+  <div class="sec-badge"><span class="dot"></span> Anti-DevTools</div>
+</div>
+
 <div class="particles" id="particles"></div>
 
 <!-- HEADER -->
@@ -577,12 +819,12 @@
       <span class="tag">Clan</span>
     </div>
     <div class="app-footer">
-      <span class="app-size">— MB</span>
-      <a href="#" class="dl-btn lime disabled">⬇ Bientôt</a>
+      <span class="app-size">17 MB</span>
+      <a href="https://drive.google.com/file/d/1GT9dLK8-I2u_CowpfCqQigckXDrT7BhH/view?usp=drive_link" class="dl-btn lime" target="_blank">⬇ Télécharger</a>
     </div>
-    <div class="sha-badge" onclick="copyHash(this, 'sha256:—')">
+    <div class="sha-badge" onclick="copyHash(this, '13f9949ed3d3e8c6b61f58e7c8fa172e7d2a004ad2572e0243820b469c65df15')">
       <span class="sha-label">SHA-256</span>
-      <span>En attente de build...</span>
+      <span>13f9949ed3d3e8c6b61f58e7c8fa172e7d2a004ad2572e0243820b469c65df15</span>
     </div>
   </div>
 
@@ -653,6 +895,121 @@
 <div id="toast">✅ Hash copié !</div>
 
 <script>
+
+  // ══ EXOTIC SECURITY v2.0 ══
+
+  // [7] Anti-DevTools
+  (function() {
+    let devopen = false;
+    const check = () => {
+      const t = new Date();
+      debugger;
+      if (new Date() - t > 100) {
+        if (!devopen) {
+          devopen = true;
+          document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;background:#071a0e;flex-direction:column;gap:16px;font-family:monospace"><div style="font-size:4rem">🛡️</div><div style="color:#a8e63d;font-size:1.2rem;letter-spacing:3px">ACCÈS REFUSÉ</div><div style="color:rgba(255,255,255,0.3);font-size:0.7rem;letter-spacing:2px">EXOTIC SECURITY — DEVTOOLS DÉTECTÉS</div></div>';
+        }
+      } else { devopen = false; }
+    };
+    setInterval(check, 1000);
+    window.addEventListener('keydown', e => {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault();
+        return false;
+      }
+    });
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  })();
+
+  // [8] Anti-iframe
+  // [8] Anti-iframe — désactivé en preview, actif en prod
+  try { if (window.top !== window.self && window.location.protocol !== "about:") { window.top.location = window.self.location; } } catch(e) {}
+
+  // [9] Integrity check — détecte si le DOM a été modifié
+  window.addEventListener('load', () => {
+    const integrity = document.querySelectorAll('.dl-btn').length;
+    if (integrity === 0) { document.body.innerHTML = ''; }
+  });
+
+  // [10] Session token — expire après 30 min
+  const SESSION_KEY = 'exotic_session';
+  const SESSION_TTL = 30 * 60 * 1000;
+  function checkSession() {
+    const s = sessionStorage.getItem(SESSION_KEY);
+    if (!s) return false;
+    const { ts } = JSON.parse(s);
+    return (Date.now() - ts) < SESSION_TTL;
+  }
+  function setSession() {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ts: Date.now(), verified: true }));
+  }
+
+  // ══ CAPTCHA ENGINE ══
+  const EXOTIC_EMOJIS = ['🌴','🍍','🦜','🌺','🌊','🦩','🍉','🥭','🌿','🌸','🎋','🐦','🍌','🌻','🦋'];
+  let correctAnswer = 0;
+  let attempts = 0;
+  const MAX_ATTEMPTS = 5;
+  let locked = false;
+
+  function newChallenge() {
+    const count = Math.floor(Math.random() * 8) + 2;
+    correctAnswer = count;
+    const picked = [];
+    for (let i = 0; i < count; i++) {
+      picked.push(EXOTIC_EMOJIS[Math.floor(Math.random() * EXOTIC_EMOJIS.length)]);
+    }
+    // shuffle
+    picked.sort(() => Math.random() - 0.5);
+    document.getElementById('captcha-emojis').textContent = picked.join(' ');
+    document.getElementById('captcha-input').value = '';
+    document.getElementById('captcha-error').textContent = '';
+    document.getElementById('captcha-input').className = 'captcha-input';
+  }
+
+  function verifyCaptcha() {
+    if (locked) return;
+    const val = parseInt(document.getElementById('captcha-input').value);
+    const input = document.getElementById('captcha-input');
+    const error = document.getElementById('captcha-error');
+    const attemptsEl = document.getElementById('captcha-attempts');
+
+    if (val === correctAnswer) {
+      input.className = 'captcha-input success';
+      error.style.color = 'var(--lime)';
+      error.textContent = '✅ Accès autorisé !';
+      setSession();
+      setTimeout(() => {
+        document.getElementById('captcha-screen').style.opacity = '0';
+        document.getElementById('captcha-screen').style.transition = 'opacity 0.5s';
+        setTimeout(() => document.getElementById('captcha-screen').style.display = 'none', 500);
+      }, 600);
+    } else {
+      attempts++;
+      input.className = 'captcha-input error';
+      if (attempts >= MAX_ATTEMPTS) {
+        locked = true;
+        const box = document.querySelector('.captcha-challenge');
+        box.innerHTML = '<div class="captcha-locked">🔒 Trop de tentatives.<br>Accès bloqué. Rechargez la page.</div>';
+        return;
+      }
+      error.textContent = `❌ Mauvaise réponse. Réessaie !`;
+      attemptsEl.textContent = `Tentative ${attempts}/${MAX_ATTEMPTS}`;
+      setTimeout(() => { input.className = 'captcha-input'; newChallenge(); }, 1200);
+    }
+  }
+
+  document.getElementById('captcha-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') verifyCaptcha();
+  });
+
+  // Init
+  if (checkSession()) {
+    document.getElementById('captcha-screen').style.display = 'none';
+  } else {
+    newChallenge();
+  }
+
+
   // PARTICLES
   const emojis = ['🌴','🍍','🦜','🌺','🌊','🦩','🍉','🥭','🌿','🌸','⭐','🎋'];
   const container = document.getElementById('particles');
